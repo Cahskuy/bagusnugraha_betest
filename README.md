@@ -3,6 +3,7 @@
 ## Overview
 
 This document outlines the API endpoints and their usage for the Project BETEST.
+This project using expressJs, Mongoose & redis
 
 ## Authentication
 
