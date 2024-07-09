@@ -2,7 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const inputHandler = require("./middlewares/inputHandler.middleware");
-
+const accountRoutes = require("./routes/account.route");
+const authRoutes = require("./routes/auth.route");
+const userRoutes = require("./routes/user.route");
+const redisClient = require("./redis");
 dotenv.config();
 
 const app = express();
@@ -13,9 +16,13 @@ mongoose.connect(process.env.DB_URI, {
   useUnifiedTopology: true,
 });
 
-const authRoutes = require("./routes/auth.route");
-const accountRoutes = require("./routes/account.route");
-const userRoutes = require("./routes/user.route");
+(async () => {
+  await redisClient
+    .on("error", (err) => console.log("Redis Client Error", err))
+    .connect();
+  console.log(await redisClient.ping());
+  console.log("Connected to Redis")
+})();
 
 app.use("/api/auth", authRoutes);
 app.use("/api/account", accountRoutes);
