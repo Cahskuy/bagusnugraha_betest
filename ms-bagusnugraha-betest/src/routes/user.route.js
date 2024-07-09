@@ -4,20 +4,19 @@ const userController = require("../controllers/user.controller");
 const authMiddleware = require("../middlewares/jwtAuth.middleware");
 
 router.get(
-  "/byAccountNumber/:accountNumber",
+  "/account-number/:accountNumber",
   authMiddleware,
   userController.getByAccountNumber
 );
 router.get(
-  "/byRegistrationNumber/:registrationNumber",
+  "/registration-number/:registrationNumber",
   authMiddleware,
   userController.getByRegistrationNumber
 );
 router.get(
-  "/loginByLastLoginDate",
+  "/login-three-days-ago",
   authMiddleware,
   userController.getLoginByLastLoginDate
 );
-router.put("/")
 
 module.exports = router;
