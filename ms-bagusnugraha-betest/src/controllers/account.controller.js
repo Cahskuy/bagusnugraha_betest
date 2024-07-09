@@ -36,7 +36,16 @@ exports.signup = async (req, res) => {
       user: newUser,
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    switch (err.code) {
+      case 11000:
+        const fieldName = Object.keys(err.keyPattern)[0];
+        res.status(400).json({
+          message: `Duplicate key error: ${fieldName} already exists`,
+        });
+        break;
+      default:
+        res.status(500).json({ message: err.message });
+    }
   }
 };
 
@@ -59,7 +68,7 @@ exports.login = async (req, res) => {
     account.lastLoginDatetime = new Date();
     await account.save();
 
-    res.json({ message: "login success", token: token });
+    res.json({ message: "login success", token: token, data: account });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -79,13 +88,13 @@ exports.updateAccount = async (req, res) => {
 
     const userId = account.userId;
     await UserInfo.findOneAndUpdate(
-      userId,
+      { userId },
       { fullName, emailAddress: email },
       { new: true }
     );
 
     await AccountLogin.findOneAndUpdate(
-      accountId,
+      { accountId },
       { userName, password },
       { new: true }
     );
