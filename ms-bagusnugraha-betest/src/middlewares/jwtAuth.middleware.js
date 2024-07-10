@@ -29,11 +29,15 @@ module.exports = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    if (err.name === "JsonWebTokenError") {
-      return res
-        .status(401)
-        .json({ message: "Unauthorized. Token is invalid." });
+    switch (err.name) {
+      case "JsonWebTokenError":
+        res.status(401).json({ message: "Unauthorized. Token is invalid." });
+        break;
+      case "TokenExpiredError":
+        res.status(401).json({ message: "Unauthorized. Token expired." });
+        break;
+      default:
+        res.status(500).json({ message: "Server error." });
     }
-    res.status(500).json({ message: "Server error." });
   }
 };
